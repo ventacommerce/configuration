@@ -1,0 +1,28 @@
+{
+    "name": "venta/configuration",
+    "description": "Venta eCommerce Framework Configuration package",
+    "authors": [
+        {
+            "name": "Konstantins Zukovs",
+            "email": "kz@scandiweb.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/ventacommerce/contracts.git"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Venta\\Configuration\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "require-dev": {
+        "phpunit/phpunit": "5.2"
+    },
+    "require": {
+        "venta/contracts": "dev-master"
+    }
+}
