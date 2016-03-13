@@ -1,30 +1,54 @@
-# Venta eCommerce framework Configuration package
+Пойдем от малого к большему :)
+Итак, как бы хотелось с этим работать:
 
-## Usage example
 ```php
-$reader = new \Venta\Configuration\Reader;
-$reader->addReader('array', \Venta\Configuration\Reader\Array::class);
-$reader->addReader('php-files', \Venta\Configuration\Reader\PhpFiles::class);
+$host = $config->get('database.host'); // 127.0.0.1
+$host = $config->get('database.host', 'localhost'); // localhost, if setting is not found
 
-$configuration = new \Venta\Configuration\Repository($reader->toArray());
+$config->set('database.host', '127.0.0.1');
+$config->set(['database.host' => 'localhost', 'database.user' => 'root']);
 
-$configuration->set('item', 123);
-$configuration->set(['item.one' => 1, 'three' => 3]);
-$configuration->get('item', 'default');
-$configuration->has('item');
-$configuration->all(); // ['item' => ['one' => 1], 'three' => 3];
+$exists = $config->has('database.host');
 
-$writer = new \Venta\Configuration\Writer;
-$writer->addWriter(\Venta\Configuration\Writer\PhpFiles::class);
-$writer->performWriting($configuration);
+$all = $config->all(); // $config->toArray();
 ```
 
-## Generic flow
+Способ работы с этим приводит нас к тому что это Repository pattern, в минимальной имплементации. Здесь оговорюсь про коллекции - я подозреваю что они будут нужны, но точно не в этом случае. Коллекции будет иметь с собой впридачу кучу методов, которые ты наврятли будешь использовать в конфигурацией - findWhere(), findAll() - по одной простой причине - конфигурация не должна быть настолько сложной и обьемной, чтоб на нее нужна была полная коллекция.
 
-1. Configuration read manager instance is created.
-2. Several sources (readers) are added to read manager in order to be used for condifguration reading.
-3. Configuration repository is created. Items, loaded by configuration read manager, are passed to it as configuration itself.
-4. Repository is used during application run time in order to get and set configuration values
-5. On application terminating, configuration writer is created in order to save configuration to permanent location and/or cache
-6. Writing handlers are added to writer
-7. Writer is performing write itself on repository passed in.
+Едем дальше, поскольку это Repository, то загрузка самих данных вне его области видимости. Это приводит нас к мысли появления загрузчика конфигурации. Он пишеться под интерфейс, описывает метод load() для возврата всей конфигурации ввиде массива, который отдается дальше репозиторию.  Что то вроде этого:
+
+```php
+$config = new ConfigurationRepository((new ConfigurationLoader)->load());
+```
+
+Дальше. Если есть загрузчик, то он должен уметь грузить данные с разных источников. Что наводит на мысль Drivers. Драйвера пишутся под интерфейс, интерфейс описывает метод read(), который будет возвращать всю подгруженную им конфигурацию.
+
+```php
+$loader = new ConfigurationLoader();
+$loader->addConfigurationReader('array', new ArrayReader);
+$loader->addConfigurationReader('php-files', new PhpFilesReader);
+
+$config = new ConfigurationRepository($loader->load());
+```
+
+Немного о стороковом имени для отдельного драйвера. По логике, каждому драйверу надо давать возможность получать какие то данные. Для этого и дается имя. Пример:
+
+```php
+$loader = new ConfigurationLoader();
+$loader->addConfigurationReader('array', new ArrayReader);
+$loader->addConfigurationReader('php-files', new PhpFilesReader);
+
+$config = new ConfigurationRepository($loader->load([
+  'array' => [
+    'database.host' => 'localhost'
+  ]
+]));
+
+// Здесь, ориентируясь по ключу массива, загрузчик передаст массив данных под этим ключем самому драйверу в функцию read(), когда будет его вызывать
+```
+
+Немного о такой передачи данных: почему бы не добавить какой ниюудь setter на загрузчик для установки данных вместо подачи этого некрасивого массива в load() метод? Ответ прост: как по мне, конфигурация не то место где надо заморачиватся. Конкретно, загрузчик используется один раз за request, да и не будет он ворочать кучей данных, чоб это стало не контролируемым для массива. Но, обсуждаемо.
+
+Менеждер записи для конфигурации (они обсуждались с сфере того, что весь этот конфиг нужно писать в базу) - он должен работать по тому же принципу, что и загрузчик конфигурации. Есть менеджер, есть драйвера записи и менеджеру сетиться или подается в конструктор репозиторий, который нужно записать.
+
+Ну вот собственно и все пироги. Ответ на вопрос причем здесь Вента - вообще не причем, ибо этот пакет вообще не знает о существовании какой то там аппликации, как собсвтенно он и не должен об этом знать :)
