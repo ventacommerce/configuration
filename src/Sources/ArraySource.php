@@ -1,6 +1,6 @@
 <?php
 
-namespace Venta\Configuration\Readers;
+namespace Venta\Configuration\Sources;
 
 use Venta\Configuration\Repository;
 
@@ -9,7 +9,7 @@ use Venta\Configuration\Repository;
  *
  * @package Venta\Configuration
  */
-class ArrayReader extends AbstractConfigurationReader
+class ArraySource extends AbstractConfigurationSource
 {
     /**
      * {@inheritdoc}

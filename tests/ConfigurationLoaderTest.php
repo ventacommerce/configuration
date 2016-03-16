@@ -25,7 +25,7 @@ class ConfigurationLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $manager = new \Venta\Configuration\Loader;
 
-        $manager->addReader(new \Venta\Configuration\Readers\ArrayReader);
+        $manager->addSource(new \Venta\Configuration\Sources\ArraySource);
 
         $this->assertEquals([
             'database' => [
@@ -44,12 +44,12 @@ class ConfigurationLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $manager = new \Venta\Configuration\Loader;
 
-        $mock = $this->getMock(\Venta\Configuration\Readers\ArrayReader::class, ['getName']);
+        $mock = $this->getMock(\Venta\Configuration\Sources\ArraySource::class, ['getName']);
         $mock->method('getName')->willReturn('stub');
 
-        $manager->addReader(new \Venta\Configuration\Readers\FileReader, 10);
-        $manager->addReader(new \Venta\Configuration\Readers\ArrayReader, 0);
-        $manager->addReader($mock, 10);
+        $manager->addSource(new \Venta\Configuration\Sources\PhpFileSource, 10);
+        $manager->addSource(new \Venta\Configuration\Sources\ArraySource, 0);
+        $manager->addSource($mock, 10);
 
         $this->assertEquals([
             'database' => [
@@ -76,7 +76,7 @@ class ConfigurationLoaderTest extends \PHPUnit_Framework_TestCase
     public function testExceptionOnNotConfiguredLoaderName()
     {
         $loader = new \Venta\Configuration\Loader;
-        $loader->addReader(new \TestConfigurationReader);
+        $loader->addSource(new \TestConfigurationReader);
     }
 
     /**
@@ -87,15 +87,15 @@ class ConfigurationLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $manager = new \Venta\Configuration\Loader;
 
-        $manager->addReader(new \Venta\Configuration\Readers\ArrayReader);
-        $manager->addReader(new \Venta\Configuration\Readers\ArrayReader);
+        $manager->addSource(new \Venta\Configuration\Sources\ArraySource);
+        $manager->addSource(new \Venta\Configuration\Sources\ArraySource);
     }
 }
 
 /**
  * Class TestConfigurationReader
  */
-class TestConfigurationReader extends \Venta\Configuration\Readers\AbstractConfigurationReader
+class TestConfigurationReader extends \Venta\Configuration\Sources\AbstractConfigurationSource
 {
     public function read(array $data = [])
     {

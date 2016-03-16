@@ -1,15 +1,15 @@
 <?php
 
-namespace Venta\Configuration\Readers;
+namespace Venta\Configuration\Sources;
 
-use Venta\Contracts\Configuration\ConfigurationReaderContract;
+use Venta\Contracts\Configuration\ConfigurationSourceContract;
 
 /**
  * Class AbstractConfigurationReader
  *
  * @package Venta\Configuration
  */
-abstract class AbstractConfigurationReader implements ConfigurationReaderContract
+abstract class AbstractConfigurationSource implements ConfigurationSourceContract
 {
     /**
      * Reader name holder

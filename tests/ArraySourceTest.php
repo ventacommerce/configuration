@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Class ArrayReaderTest
+ * Class ArraySourceTest
  */
-class ArrayReaderTest extends \PHPUnit_Framework_TestCase
+class ArraySourceTest extends \PHPUnit_Framework_TestCase
 {
     public function testMainFunctions()
     {
-        $reader = new \Venta\Configuration\Readers\ArrayReader;
+        $reader = new \Venta\Configuration\Sources\ArraySource;
 
         $this->assertEquals([
             'database' => [

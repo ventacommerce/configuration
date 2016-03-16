@@ -29,7 +29,7 @@ class FileReaderTest extends \PHPUnit_Framework_TestCase
 
     public function testBasicFlow()
     {
-        $reader = new \Venta\Configuration\Readers\FileReader;
+        $reader = new \Venta\Configuration\Sources\PhpFileSource;
 
         $this->assertEquals([
             'database' => 'localhost',
@@ -44,7 +44,7 @@ class FileReaderTest extends \PHPUnit_Framework_TestCase
 
     public function testAcceptOnlyPhpFiles()
     {
-        $reader = new \Venta\Configuration\Readers\FileReader;
+        $reader = new \Venta\Configuration\Sources\PhpFileSource;
 
         $this->assertEquals([], $reader->toArray(
             [$this->_disk->getChild('config.ini')->url()]
@@ -53,7 +53,7 @@ class FileReaderTest extends \PHPUnit_Framework_TestCase
 
     public function testWontFallOnBrokenConfigFile()
     {
-        $reader = new \Venta\Configuration\Readers\FileReader;
+        $reader = new \Venta\Configuration\Sources\PhpFileSource;
 
         $this->assertEquals([], $reader->toArray(
             [$this->_disk->getChild('broken.php')->url()]

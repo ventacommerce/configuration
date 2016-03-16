@@ -3,7 +3,7 @@
 namespace Venta\Configuration;
 
 use Venta\Contracts\Configuration\ConfigurationLoaderContract;
-use Venta\Contracts\Configuration\ConfigurationReaderContract;
+use Venta\Contracts\Configuration\ConfigurationSourceContract;
 
 /**
  * Class Loader
@@ -29,7 +29,7 @@ class Loader implements ConfigurationLoaderContract
     /**
      * {@inheritdoc}
      */
-    public function addReader(ConfigurationReaderContract $reader, $priority = 0)
+    public function addSource(ConfigurationSourceContract $reader, $priority = 0)
     {
         $this->_checkName($reader->getName());
 
@@ -50,7 +50,7 @@ class Loader implements ConfigurationLoaderContract
             usort($this->_readers, [$this, '_sortByPriority']);
 
             foreach ($this->_readers as $readerInfo) {
-                /** @var \Venta\Contracts\Configuration\ConfigurationReaderContract $reader */
+                /** @var \Venta\Contracts\Configuration\ConfigurationSourceContract $reader */
                 $reader = $readerInfo['reader'];
                 $localData = array_key_exists($readerInfo['name'], $data) ? $data[$readerInfo['name']] : [];
 

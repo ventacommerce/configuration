@@ -1,13 +1,13 @@
 <?php
 
-namespace Venta\Configuration\Readers;
+namespace Venta\Configuration\Sources;
 
 /**
  * Class FileReader
  *
  * @package Venta\Configuration
  */
-class FileReader extends AbstractConfigurationReader
+class PhpFileSource extends AbstractConfigurationSource
 {
     /**
      * {@inheritdoc}
